@@ -35,6 +35,12 @@ struct GameBoardView: View {
     // Tracks whether game is won or not
     @State var gameWon = false
     
+    // Tracks whether there is a draw
+    @State var draw = false
+    
+    // Tracks whether should disable changes of the tiles
+    @State var disableTileStateChanges = false
+    
     // MARK: Computed properties
     var body: some View {
         
@@ -45,11 +51,19 @@ struct GameBoardView: View {
             // Current player or who won
             Text("Current player is: \(currentPlayer)")
                 // Only show when game is not over
-                .opacity(gameWon == false ? 1.0 : 0.0)
+                .opacity(gameWon == false && draw == false ? 1.0 : 0.0)
 
-            Text("\(currentPlayer) wins!")
-                // Only show when game IS over
-                .opacity(gameWon == true ? 1.0 : 0.0)
+            ZStack {
+                
+                Text("\(currentPlayer) wins!")
+                    // Only show when game IS over
+                    .opacity(gameWon == true ? 1.0 : 0.0)
+                
+                Text("There is a draw!")
+                    // Only show when there's a draw
+                    .opacity(draw == true ? 1.0 : 0.0)
+                
+            }
 
             Spacer()
             
@@ -59,39 +73,48 @@ struct GameBoardView: View {
                 // to the helper view using a binding
                 TileView(state: $upperLeft,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
                 TileView(state: $upperMiddle,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
                 TileView(state: $upperRight,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
             }
             
             // Middle row
             HStack {
                 TileView(state: $middleLeft,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
                 TileView(state: $middleMiddle,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
                 TileView(state: $middleRight,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
             }
             
             // Bottom row
             HStack {
                 TileView(state: $bottomLeft,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
                 TileView(state: $bottomMiddle,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
                 TileView(state: $bottomRight,
                          player: currentPlayer,
-                         turn: $currentTurn)
+                         turn: $currentTurn,
+                         disableTiles: $disableTileStateChanges)
             }
             
             Spacer()
@@ -101,7 +124,7 @@ struct GameBoardView: View {
                 
                 Text("Current turn is: \(currentTurn)")
                     // Only show when game is not over
-                    .opacity(gameWon == false ? 1.0 : 0.0)
+                    .opacity(gameWon == false && draw == false ? 1.0 : 0.0)
                 
                 Button(action: {
                     resetGame()
@@ -109,7 +132,7 @@ struct GameBoardView: View {
                     Text("New Game")
                 })
                 // Only show when game IS over
-                .opacity(gameWon == true ? 1.0 : 0.0)
+                .opacity(gameWon == true || draw == true ? 1.0 : 0.0)
                 
             }
             
@@ -122,6 +145,9 @@ struct GameBoardView: View {
 
             // Did somebody win?
             checkForWin()
+            
+            //Is it a draw?
+            checkForDraw()
             
         }
         
@@ -178,6 +204,8 @@ struct GameBoardView: View {
                 gameWon = true
                 print("Game won by \(currentPlayer)...")
                 
+                disableTileStateChanges = true
+                
                 // End function now
                 return
                 
@@ -192,6 +220,15 @@ struct GameBoardView: View {
             currentPlayer = nought
         }
 
+    }
+    
+    func checkForDraw() {
+        
+        if currentTurn == 10 && gameWon == false {
+            draw = true
+            disableTileStateChanges = true
+        }
+        
     }
     
     func resetGame() {
@@ -214,6 +251,12 @@ struct GameBoardView: View {
         
         // Noughts goes first
         currentPlayer = nought
+        
+        //No draw
+        draw = false
+        
+        //allow state changes for tiles
+        disableTileStateChanges = false
     }
 }
 
