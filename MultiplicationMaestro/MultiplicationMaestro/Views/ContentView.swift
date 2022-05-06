@@ -16,23 +16,31 @@ struct ContentView: View {
     
     // Holds the user's input
     @State var inputGiven = ""
-
+    
     // Tracks whether the input has even been checked yet
     @State var answerChecked: Bool = false
-
+    
     // Tracks whether the provided answer is correct or not
     @State var answerCorrect: Bool = false
     
     // Tracks the results of all questions answered so far
     @State var results: [Result] = []
-
+    
     // MARK: Computed properties
+    var userInput: String {
+        if inputGiven == "" {
+            return "_"
+        } else {
+            return inputGiven
+        }
+    }
+    
     // The main user interface
     /// - Tag: mm_primary_interface
     var body: some View {
         
         VStack(spacing: 0) {
-
+            
             // Present the question
             QuestionPresentationView(multiplicand: multiplicand,
                                      multiplier: multiplier)
@@ -62,9 +70,9 @@ struct ContentView: View {
                                       answerChecked: $answerChecked,
                                       answerCorrect: $answerCorrect,
                                       inputGiven: $inputGiven)
-
+                
             }
-
+            
             // Show results of prior questions attempted
             List(results) { currentResult in
                 // Use a helper view to display each prior result

@@ -26,6 +26,9 @@ struct TileView: View {
     
     @Binding var disableTiles: Bool
     
+    //controls rotation degree
+    @State var rotationDegree: Double = 0.0
+    
     // MARK: Computed property
     var body: some View {
         Text(state)
@@ -35,6 +38,7 @@ struct TileView: View {
             // Ensure the "hit box" is the entire view
             // (Normally transparent parts of view cannot be tapped)
             .contentShape(Rectangle())
+            .rotation3DEffect(.degrees(rotationDegree), axis: (x: 0, y: 1, z: 0))
             // Taps on view uses the tile
             .onTapGesture {
                 
@@ -45,6 +49,11 @@ struct TileView: View {
                     
                     // Advance to next turn
                     turn += 1
+                    
+                    //rotate
+                    withAnimation(Animation.easeInOut(duration: 0.4)) {
+                        rotationDegree += 360
+                    }
                     
                 }
                 
